@@ -1,1 +1,1 @@
-# project-34
+See the logic behind Newton's Cradle
