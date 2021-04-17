@@ -1,99 +1,76 @@
+const Engine=Matter.Engine;
+const World=Matter.World;
+const Bodies=Matter.Bodies;
+const Body=Matter.Body;
+const Constraint=Matter.Constraint;
+const MouseConstraint=Matter.MouseConstraint;
+const Mouse=Matter.Mouse;
+const Render=Matter.Render;
 
-const Engine = Matter.Engine;
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Body = Matter.Body;
-const Render = Matter.Render;
-const Constraint = Matter.Constraint;
-var bobObject1,bobObject2,bobObject3, bobObject4,bobObject5, roofObject
-var rope1,rope2,rope3, rope4,rope5;
-var world;
-
-
-function setup() {
-	createCanvas(800,600);
-	rectMode(CENTER);
+let world,engine;
+let box1,box2,box3,box4,box5;
+let rope1,rope2,rope3,rope4,rope5;
+let mConstraint;
 
 
-	engine = Engine.create();
-	world = engine.world;
+function setup(){
+ createCanvas(500,500);
 
-	bob1=new Bob(300,350,52);
-    bob2=new Bob(350,350,52);
-    bob3=new Bob(400,350,52);
-    bob4=new Bob(450,350,52);
-    bob5=new Bob(500,350,52);
-
-    ground1 = new RoofTop(400,90,300,40);
-
-    sling1= new Rope(bob1.body,ground1.body,-50*2,20);
-    sling2= new Rope(bob2.body,ground1.body,-25*2,20);
-    sling3= new Rope(bob3.body,ground1.body,-0*2,20);
-    sling4= new Rope(bob4.body,ground1.body,25*2,20);
-    sling5= new Rope(bob5.body,ground1.body,50*2,20);
- 
-	
-
-	var render = Render.create({
-	  element: document.body,
-	  engine: engine,
-	  options: {
-	    width: 1200,
-	    height: 700,
-	    wireframes: false
-	  }
-	});
+ engine=Engine.create();
+ world=engine.world;
 
 
-	Engine.run(engine);
-	//Render.run(render);
-  
+    box1=new Pendulum(100,300,15);
+    box2=new Pendulum(162,300,15);
+    box3=new Pendulum(224,300,15);
+    box4=new Pendulum(286,300,15);
+    box5=new Pendulum(348,300,15);
+
+    rope1=new Sling(box1.body,{x:100,y:45});
+    rope2=new Sling(box2.body,{x:162,y:45});
+    rope3=new Sling(box3.body,{x:224,y:45});
+    rope4=new Sling(box4.body,{x:286,y:45});
+    rope5=new Sling(box5.body,{x:348,y:45});
+
+    let render = Render.create({
+        element: document.body,
+        engine: engine,
+        options: {
+          width: 1200,
+          height: 700,
+          wireframes: false
+        }
+      });
+    
+
 }
 
+function draw(){
+    background(0);
+    Engine.update(engine);
 
-function draw() {
-  rectMode(CENTER);
-  background("lightBlue");
+    let canvasmouse=Mouse.create(canvas.elt);
+    canvasmouse.pixelRatio=pixelDensity();
+    let options={
+        mouse:canvasmouse,
+    }
+    mConstraint=MouseConstraint.create(engine,options);
+    World.add(world,mConstraint);
 
-  bob1.display();
-  bob2.display();
-  bob3.display();
-  bob3.display();
-  bob4.display();
-  bob5.display();
-  ground1.display();
-  sling1.display();
-  sling2.display();
-  sling3.display();
-  sling4.display();
-  sling5.display();
- 
+    box1.display();
+    box2.display();
+    box3.display();
+    box4.display();
+    box5.display();
+
+    rope1.display();
+    rope2.display();
+    rope3.display();
+    rope4.display();
+    rope5.display();
+
 }
 
-function keyPressed() {
-  	if (keyCode === UP_ARROW) {
-
-		Matter.Body.applyForce(bob1.body,bob1.body.position,{x:-45,y:-45}); 
-
-
-  	}
+function mouseDragged(){
+    Matter.Body.setPosition(box1.body,{x:mouseX,y:mouseY});
 }
-
-
-function drawLine(constraint)
-{
-	bobBodyPosition=constraint.bodyA.position
-	roofBodyPosition=constraint.bodyB.position
-
-	roofBodyOffset=constraint.pointB;
-	
-	roofBodyX=roofBodyPosition.x+roofBodyOffset.x
-	roofBodyY=roofBodyPosition.y+roofBodyOffset.y
-	line(bobBodyPosition.x, bobBodyPosition.y, roofBodyX,roofBodyY);
-}
-
-
-
-
-
-
